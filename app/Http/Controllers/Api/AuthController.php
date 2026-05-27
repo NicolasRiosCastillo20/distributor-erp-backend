@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\AuthService;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\LoginRequest;
 
 class AuthController extends Controller
 {
@@ -15,15 +17,9 @@ class AuthController extends Controller
     /**
      * Register a new user.
      */
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        $data = $this->authService->register($validated);
+        $data = $this->authService->register($request->validated());
 
         return response()->json([
             'message' => $data['message'],
@@ -33,14 +29,9 @@ class AuthController extends Controller
     }
 
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $validated = $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-
-        $data = $this->authService->login($validated);
+        $data = $this->authService->login($request->validated());
 
         return response()->json([
             'message' => $data['message'],
